@@ -3,22 +3,22 @@ version: 0.2
 phases:
   pre_build:
     commands:
-      - echo "Logging in to Amazon ECR..."
-      - aws ecr get-login-password --region "$AWS_DEFAULT_REGION" | docker login --username AWS --password-stdin "$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com"
-      - export REPOSITORY_URI="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$ECR_REPOSITORY"
-      - export IMAGE_TAG="$(printf '%s' "$CODEBUILD_RESOLVED_SOURCE_VERSION" | cut -c 1-7)"
-      - if [ -z "$IMAGE_TAG" ]; then IMAGE_TAG="manual-$(date +%Y%m%d%H%M%S)"; fi
-      - echo "Image tag: $IMAGE_TAG"
+      - 'echo "Logging in to Amazon ECR..."'
+      - 'aws ecr get-login-password --region "$AWS_DEFAULT_REGION" | docker login --username AWS --password-stdin "$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com"'
+      - 'export REPOSITORY_URI="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$ECR_REPOSITORY"'
+      - 'export IMAGE_TAG="$(printf "%s" "$CODEBUILD_RESOLVED_SOURCE_VERSION" | cut -c 1-7)"'
+      - 'if [ -z "$IMAGE_TAG" ]; then IMAGE_TAG="manual-$(date +%Y%m%d%H%M%S)"; fi'
+      - 'echo "Image tag: $IMAGE_TAG"'
 
   build:
     commands:
-      - echo "Building Docker image..."
-      - docker build -t "$REPOSITORY_URI:$IMAGE_TAG" .
-      - docker tag "$REPOSITORY_URI:$IMAGE_TAG" "$REPOSITORY_URI:latest"
+      - 'echo "Building Docker image..."'
+      - 'docker build -t "$REPOSITORY_URI:$IMAGE_TAG" .'
+      - 'docker tag "$REPOSITORY_URI:$IMAGE_TAG" "$REPOSITORY_URI:latest"'
 
   post_build:
     commands:
-      - echo "Pushing image to ECR..."
-      - docker push "$REPOSITORY_URI:$IMAGE_TAG"
-      - docker push "$REPOSITORY_URI:latest"
-      - echo "Docker image successfully pushed to ECR."
+      - 'echo "Pushing image to ECR..."'
+      - 'docker push "$REPOSITORY_URI:$IMAGE_TAG"'
+      - 'docker push "$REPOSITORY_URI:latest"'
+      - 'echo "Docker image successfully pushed to ECR."'
